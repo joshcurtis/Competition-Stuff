@@ -14,3 +14,5 @@ Competition-Stuff
 10. Ford-Fulkerson method for maximum flow
 11. Edmonds-Karp algorithm for maximum flow
 12. Bipartite matching
+
+### [Karp's 21 NP-complete problems](https://en.wikipedia.org/wiki/Karp%27s_21_NP-complete_problems)
