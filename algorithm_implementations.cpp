@@ -14,3 +14,37 @@ void floydWarshall() {
         }
     }
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// Prim's Algorithm - Minimum Spanning Tree
+////////////////////////////////////////////////////////////////////////////////
+struct Edge {
+    Edge(int dst=0, int w=0, int src=0) : dst(dst), src(src), w(w) {}
+    bool operator>(const Edge& other) const {
+        return w > other.w;
+    }
+    int dst, src; // src may be optional
+    int w;
+};
+vector<Edge> graph[N]; // Adjacency list
+
+set<int> S;
+priority_queue<Edge, vector<Edge>, greater<Edge> > pq; // need queue and functional
+                                                       // greater<Edge> means smallest first
+                                                       // I think it's pretty dumb, seems backwards
+void enqueue(int node) {
+    S.insert(node);
+    for (int i=0; i<graph[node].size(); i++) pq.push(graph[node][i]);
+}
+
+int prims() {
+    int total = 0;
+    enqueue(0); // Initial node
+    while (S.size() < n) {
+        Edge edge = pq.top(); pq.pop();
+        if (S.count(edge.dst)>0) continue;
+        tot += edge.w;
+        enqueue(edge.dst);
+    }
+    return total;
+}
