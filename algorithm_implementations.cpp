@@ -1,9 +1,65 @@
 ////////////////////////////////////////////////////////////////////////////////
-// Floyd Warshall - All pairs shortest paths
+// N-Choose-R / Pascals Triangle
+// Runtime: O(n^2) initialize, O(1) get solution
+// Usage: Call initNCR();
+//        Access solution with nCr[n][r];
+// Notes: Works for n up to 66 on ull
 ////////////////////////////////////////////////////////////////////////////////
-#define INF INT_MAX // From climits.h, LLONG_MAX or ULLONG_MAX for 64bit ints
-int W[N][N]; // Diagonals should be zero, unconnected should be high value (INF)
-// Notes: 1 time we had to run it twice?
+typedef unsigned long long ull;
+ull nCr[68][68]; // Answer stored here
+void initNCR() {
+  for (int i=0; i<68; i++) {
+    nCr[i][i] = 1;
+    nCr[i][0] = 1;
+  }
+  for (int i=2; i<68; i++) {
+    for (int j=1; j<i; j++) {
+      nCr[i][j] = nCr[i-1][j-1] + nCr[i-1][j];
+    }
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Factorial
+// Runtime: O(n) initialize, O(1) get solution
+// Usage: Call initFact();
+//        Access solution with fact[n];
+// Notes: Works for n up to 20 on uint64
+//        Works for n up to 12 on uint32
+////////////////////////////////////////////////////////////////////////////////
+typedef unsigned long long ull;
+ull fact[21]; // Answer stored here
+void initFact() {
+  fact[0] = 1;
+  for (int i=1; i<21; i++)
+    fact[i] = fact[i-1] * i;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Floyd Warshall - All pairs shortest paths
+// Runtime: O(n^3) to get all pairs shortest path, O(1) to access
+// Usage: Set MAX_N to the maximum number of nodes
+//        Set N to number of nodes in graph
+//        Fill in adjacency matrix
+//        Call floydWarshall();
+//        Access with W[src][dst];
+// Notes: Diagonals should be 0, unconnected should be INF
+//        We had to run this twice once?
+////////////////////////////////////////////////////////////////////////////////
+#include <algorithm>
+#include <climits>
+using namespace std;
+#define INF INT_MAX
+#define MAX_N // Fill in
+int N;
+int W[MAX_N][MAX_N];
+void reset() { // Optional helper
+  for (int i=0; i<MAX_N; i++) {
+    fill(W[i], W[i]+MAX_N, INT_MAX);
+    W[i][i] = 0;
+  }
+}
+
 void floydWarshall() {
     for (int k=0; k<N; k++) {
         for (int i=0; i<N; i++) {
@@ -13,38 +69,4 @@ void floydWarshall() {
             }
         }
     }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// Prim's Algorithm - Minimum Spanning Tree
-////////////////////////////////////////////////////////////////////////////////
-struct Edge {
-    Edge(int dst=0, int w=0, int src=0) : dst(dst), src(src), w(w) {}
-    bool operator>(const Edge& other) const {
-        return w > other.w;
-    }
-    int dst, src; // src may be optional
-    int w;
-};
-vector<Edge> graph[N]; // Adjacency list
-
-set<int> S;
-priority_queue<Edge, vector<Edge>, greater<Edge> > pq; // need queue and functional
-                                                       // greater<Edge> means smallest first
-                                                       // I think it's pretty dumb, seems backwards
-void enqueue(int node) {
-    S.insert(node);
-    for (int i=0; i<graph[node].size(); i++) pq.push(graph[node][i]);
-}
-
-int prims() {
-    int total = 0;
-    enqueue(0); // Initial node
-    while (S.size() < n) {
-        Edge edge = pq.top(); pq.pop();
-        if (S.count(edge.dst)>0) continue;
-        tot += edge.w;
-        enqueue(edge.dst);
-    }
-    return total;
 }
